@@ -1,0 +1,31 @@
+# Importing necessary libraries
+from sklearn.datasets import fetch_openml
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+from sklearn.svm import SVC
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+
+# Load the MNIST dataset
+X, y = fetch_openml('mnist_784', version=1, return_X_y=True)
+
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Create a pipeline for preprocessing and training the model
+pipeline = Pipeline([
+    ('scaler', StandardScaler()),  # Standardize the input features
+    ('pca', PCA(n_components=0.95)),  # Reduce the dimensionality of the data
+    ('classifier', SVC(kernel='rbf', C=100, gamma='scale'))  # Train an SVM classifier
+])
+
+# Fit the pipeline to the training data
+pipeline.fit(X_train, y_train)
+
+# Use the pipeline to make predictions on the test data
+y_pred = pipeline.predict(X_test)
+
+# Calculate the accuracy of the predictions
+accuracy = accuracy_score(y_test, y_pred)
+print('Accuracy:', accuracy)
